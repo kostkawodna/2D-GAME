@@ -40,6 +40,7 @@ void player::UpdatePlayer()
 {
     bool isMoving = false;
 
+
     if (IsKeyDown(KEY_D))
     {
         playerPos.x += playerSpeed.x;
@@ -52,25 +53,42 @@ void player::UpdatePlayer()
         isMoving = true;
         facingRight = false;
     }
-
-    // state switch
-    if (isMoving)
+    if (IsKeyDown(KEY_W) && isGrounded)
     {
+        yVelocity = -10.0f;
+        isGrounded = false;
+    }
+    if (IsKeyDown(KEY_LEFT))
+    {
+
+    }
+
+    yVelocity += gravity;
+    playerPos.y += yVelocity;
+
+    // TEMPORARY simple ground collision
+    float floorHeight = 150.0f; // replace with actual platform logic later
+    if (playerPos.y >= floorHeight)
+    {
+        playerPos.y = floorHeight;
+        yVelocity = 0;
+        isGrounded = true;
+    }
+
+    if (!isGrounded)
+        state = AnimationState::JUMP;
+    else if (isMoving)
         state = AnimationState::WALK;
-    }
     else
-    {
         state = AnimationState::IDLE;
-    }
 
-    // update frame of animation
+    // Animation frame update
     Animation& currentAnim = animations[state];
-
     frameRec.width = (float)currentAnim.texture.width / currentAnim.frameCount;
     frameRec.height = (float)currentAnim.texture.height;
 
     frameCounter++;
-    if (frameCounter >= (60 / 12))  // 12 FPS animation speed
+    if (frameCounter >= (60 / 12))
     {
         frameCounter = 0;
         currentFrame++;
@@ -82,6 +100,7 @@ void player::UpdatePlayer()
     frameRec.y = 0;
 }
 
+
 Animation& player::GetCurrentAnimation()
 {
     return animations[state];
@@ -90,8 +109,11 @@ Animation& player::GetCurrentAnimation()
 void player::DrawPlayer()
 {
     Animation& currentAnim = GetCurrentAnimation();
+    playerHitBox = { playerPos.x + 32, playerPos.y + 28, 32, 35};
 
-    if(facingRight)
+    DrawText(playerName, playerHitBox.x - textWidth / 2 + playerHitBox.width / 2, playerHitBox.y - 20, 10, PINK); //Draw Player name
+
+    if (facingRight)
         DrawTextureRec(currentAnim.texture, frameRec, playerPos, WHITE);
     else
     {
@@ -100,4 +122,7 @@ void player::DrawPlayer()
 
         DrawTextureRec(currentAnim.texture, flippedRec, playerPos, WHITE);
     }
+
+    DrawRectangleLines(playerHitBox.x, playerHitBox.y, playerHitBox.width, playerHitBox.height, RED); //hitbox
+    DrawRectangleLines(playerPos.x, playerPos.y, frameRec.width, frameRec.height, WHITE); //size of animated frame
 }

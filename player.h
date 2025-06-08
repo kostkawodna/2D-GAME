@@ -32,11 +32,21 @@ private:
 	std::map<AnimationState, Animation> animations;
 	Texture2D texture;
 	Rectangle frameRec;
+	Rectangle playerHitBox;
 	AnimationState state = AnimationState::IDLE;
 	Animation& GetCurrentAnimation();
 
+	const char* playerName = "player";
+	int textWidth = MeasureText(playerName, 10);
+
 	int currentFrame = 0;
 	int frameCounter = 0;
+	int jumpTimer = 0;
+
 	bool facingRight = true;
 	bool isJumping = false;
+	bool isGrounded = false;
+
+	float yVelocity = 0.0f;
+	float gravity = 0.5f;
 };

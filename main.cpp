@@ -9,7 +9,7 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "2D");
 
     player myPlayer;
-    myPlayer.playerPos = { 350.0f, 280.0f };
+    myPlayer.playerPos = { 350.0f, 150.0f };
     myPlayer.LoadPlayerTexture();
 
     SetTargetFPS(60);
@@ -19,7 +19,7 @@ int main(void)
         myPlayer.UpdatePlayer();
 
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(DARKGRAY);
         myPlayer.DrawPlayer();
         EndDrawing();
     }
