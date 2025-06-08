@@ -20,6 +20,7 @@ int main(void)
 
         BeginDrawing();
         ClearBackground(DARKGRAY);
+        DrawLine(0, 210, 800, 210, BLACK);
         myPlayer.DrawPlayer();
         EndDrawing();
     }

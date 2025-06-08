@@ -8,7 +8,9 @@ enum class AnimationState
 	IDLE,
 	WALK,
 	RUN,
-	JUMP
+	JUMP,
+	ATTACK1,
+	DEFEND
 };
 
 struct Animation
@@ -30,23 +32,29 @@ public:
 
 private:
 	std::map<AnimationState, Animation> animations;
+
 	Texture2D texture;
 	Rectangle frameRec;
 	Rectangle playerHitBox;
+
 	AnimationState state = AnimationState::IDLE;
 	Animation& GetCurrentAnimation();
 
 	const char* playerName = "player";
 	int textWidth = MeasureText(playerName, 10);
 
+	// Animation
 	int currentFrame = 0;
 	int frameCounter = 0;
-	int jumpTimer = 0;
 
+	// Physics and movement
 	bool facingRight = true;
-	bool isJumping = false;
 	bool isGrounded = false;
+    bool isAttacking = false;
+	bool isDefending = false;
 
 	float yVelocity = 0.0f;
 	float gravity = 0.5f;
+	float walkSpeed = 2.0f;
+	float runSpeed = 4.0f;
 };

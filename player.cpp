@@ -13,7 +13,9 @@ void player::LoadPlayerTexture()
         {AnimationState::IDLE, "IDLE.png", 7},
         {AnimationState::WALK, "WALK.png", 8},
         {AnimationState::RUN, "RUN.png", 8},
-        {AnimationState::JUMP, "JUMP.png", 5}
+        {AnimationState::JUMP, "JUMP.png", 5},
+        {AnimationState::ATTACK1, "ATTACK 1.png", 6},
+        {AnimationState::DEFEND, "DEFEND.png", 6}
     };
 
     for (const auto& info : animationsToLoad)
@@ -38,30 +40,49 @@ void player::LoadPlayerTexture()
 
 void player::UpdatePlayer()
 {
+    int jumpTimer = 0;
+
     bool isMoving = false;
+    bool movingRight = IsKeyDown(KEY_D);
+    bool movingLeft = IsKeyDown(KEY_A);
+    bool shiftHeld = IsKeyDown(KEY_LEFT_SHIFT);
+    bool isRunning = shiftHeld && (movingRight || movingLeft);
 
+    float actualSpeed = isRunning ? runSpeed : walkSpeed;
 
-    if (IsKeyDown(KEY_D))
+    if (movingRight && !isAttacking)
     {
-        playerPos.x += playerSpeed.x;
+        playerPos.x += actualSpeed;
         isMoving = true;
         facingRight = true;
     }
-    if (IsKeyDown(KEY_A))
+    if (movingLeft && !isAttacking)
     {
-        playerPos.x -= playerSpeed.x;
+        playerPos.x -= actualSpeed;
         isMoving = true;
         facingRight = false;
     }
-    if (IsKeyDown(KEY_W) && isGrounded)
+    if ((IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_W)) && isGrounded && !isAttacking)
     {
         yVelocity = -10.0f;
         isGrounded = false;
     }
-    if (IsKeyDown(KEY_LEFT))
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !isAttacking && isGrounded && !isDefending)
     {
-
+        isAttacking = true;
+        currentFrame = 0;
+        frameCounter = 0;
     }
+    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !isAttacking && isGrounded)
+    {
+        isDefending = true;
+    }
+    else
+    {
+        isDefending = false;
+    }
+        
+    isRunning = shiftHeld && (movingRight || movingLeft);
 
     yVelocity += gravity;
     playerPos.y += yVelocity;
@@ -77,6 +98,12 @@ void player::UpdatePlayer()
 
     if (!isGrounded)
         state = AnimationState::JUMP;
+    else if (isAttacking)
+        state = AnimationState::ATTACK1;
+    else if (isDefending)
+        state = AnimationState::DEFEND;
+    else if (isRunning && isMoving)
+        state = AnimationState::RUN;
     else if (isMoving)
         state = AnimationState::WALK;
     else
@@ -92,7 +119,14 @@ void player::UpdatePlayer()
     {
         frameCounter = 0;
         currentFrame++;
-        if (currentFrame >= currentAnim.frameCount)
+
+        if (state == AnimationState::ATTACK1 && currentFrame >= currentAnim.frameCount)
+        {
+            isAttacking = false;
+            currentFrame = 0;
+        }
+        // ADD DEFEND LOGIC HERE
+        else if (currentFrame >= currentAnim.frameCount)
             currentFrame = 0;
     }
 
@@ -109,7 +143,7 @@ Animation& player::GetCurrentAnimation()
 void player::DrawPlayer()
 {
     Animation& currentAnim = GetCurrentAnimation();
-    playerHitBox = { playerPos.x + 32, playerPos.y + 28, 32, 35};
+    playerHitBox = { playerPos.x + 32, playerPos.y + 27, 32, 35};
 
     DrawText(playerName, playerHitBox.x - textWidth / 2 + playerHitBox.width / 2, playerHitBox.y - 20, 10, PINK); //Draw Player name
 
@@ -123,6 +157,7 @@ void player::DrawPlayer()
         DrawTextureRec(currentAnim.texture, flippedRec, playerPos, WHITE);
     }
 
-    DrawRectangleLines(playerHitBox.x, playerHitBox.y, playerHitBox.width, playerHitBox.height, RED); //hitbox
-    DrawRectangleLines(playerPos.x, playerPos.y, frameRec.width, frameRec.height, WHITE); //size of animated frame
+    //DrawRectangleLines(playerHitBox.x, playerHitBox.y, playerHitBox.width, playerHitBox.height, RED); //hitbox
+    //DrawRectangleLines(playerPos.x, playerPos.y, frameRec.width, frameRec.height, WHITE); //size of animated frame
 }
+
