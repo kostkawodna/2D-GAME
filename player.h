@@ -2,6 +2,8 @@
 #include <raylib.h>
 #include <string>
 #include <map>
+#include <vector>
+#include "level.h"
 
 enum class AnimationState
 {
@@ -26,21 +28,28 @@ public:
 	Vector2 playerPos = { 0, 0 };
 	Vector2 playerSpeed = { 3, 3 };
 
-	void LoadPlayerTexture();
+	Rectangle frameRec; // used for camera and animation
+
 	void DrawPlayer();
-	void UpdatePlayer();
+	void UpdatePlayer(const std::vector<Obstacle>& obstacles);
+	void LoadPlayerTexture();
 
 private:
+	// Player texture
 	std::map<AnimationState, Animation> animations;
-
 	Texture2D texture;
-	Rectangle frameRec;
-	Rectangle playerHitBox;
-
 	AnimationState state = AnimationState::IDLE;
 	Animation& GetCurrentAnimation();
 
-	const char* playerName = "player";
+	// Player HitBox
+	float hitboxOffsetX = 32.0f;
+	float hitboxOffsetY = 27.0f;
+	float hitboxWidth = 32.0f;
+	float hitboxHeight = 35.0f;
+	Rectangle playerHitBox;
+
+	// Username
+	const char* playerName = "jj_joker";
 	int textWidth = MeasureText(playerName, 10);
 
 	// Animation
@@ -48,6 +57,7 @@ private:
 	int frameCounter = 0;
 
 	// Physics and movement
+	void HandleCollisions(const std::vector<Obstacle>& obstacles);
 	bool facingRight = true;
 	bool isGrounded = false;
     bool isAttacking = false;
