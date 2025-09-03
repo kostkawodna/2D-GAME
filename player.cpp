@@ -186,7 +186,7 @@ Animation& player::GetCurrentAnimation()
 void player::DrawPlayer()
 {
     Animation& currentAnim = GetCurrentAnimation();
-    DrawText(playerName, playerHitBox.x - textWidth / 2 + playerHitBox.width / 2, playerHitBox.y - 20, 10, PINK); //Draw Player name
+    DrawText(playerName, playerHitBox.x - textWidth / 2 + playerHitBox.width / 2, playerHitBox.y - 20, 10, PINK); // Draw Player name
 
     if (facingRight)
         DrawTextureRec(currentAnim.texture, frameRec, playerPos, WHITE);
@@ -198,7 +198,7 @@ void player::DrawPlayer()
         DrawTextureRec(currentAnim.texture, flippedRec, playerPos, WHITE);
     }
 
-    DrawRectangleLines(playerHitBox.x, playerHitBox.y, playerHitBox.width, playerHitBox.height, RED); //hitbox
-    DrawRectangleLines(playerPos.x, playerPos.y, frameRec.width, frameRec.height, WHITE); //size of animated frame
+    //DrawRectangleLines(playerHitBox.x, playerHitBox.y, playerHitBox.width, playerHitBox.height, RED); // Player hitbox
+    //DrawRectangleLines(playerPos.x, playerPos.y, frameRec.width, frameRec.height, WHITE); // Size of animated frame
 }
 

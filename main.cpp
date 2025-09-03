@@ -39,7 +39,7 @@ int main(void)
         if (IsKeyPressed(KEY_N)) automation.TogglePlayback();
         if (IsKeyPressed(KEY_M)) {
             automation.ResetScene();
-            myPlayer.playerPos = { 400, 280 }; // reset player state
+            myPlayer.playerPos = { 400, 280 }; // Reset player state
         }
         automation.Update();
 

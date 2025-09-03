@@ -28,7 +28,7 @@ public:
 	Vector2 playerPos = { 0, 0 };
 	Vector2 playerSpeed = { 3, 3 };
 
-	Rectangle frameRec; // used for camera and animation
+	Rectangle frameRec; // Used for camera and animation
 
 	void DrawPlayer();
 	void UpdatePlayer(const std::vector<Obstacle>& obstacles);
@@ -49,7 +49,7 @@ private:
 	Rectangle playerHitBox;
 
 	// Username
-	const char* playerName = "jj_joker";
+	const char* playerName = "Player1";
 	int textWidth = MeasureText(playerName, 10);
 
 	// Animation
