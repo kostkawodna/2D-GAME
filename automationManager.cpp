@@ -1,7 +1,7 @@
 #include "automationManager.h"
 
 AutomationManager::AutomationManager() {
-    aelist = LoadAutomationEventList(0); // start empty
+    aelist = LoadAutomationEventList(0);
     SetAutomationEventList(&aelist);
     eventRecording = false;
     eventPlaying = false;

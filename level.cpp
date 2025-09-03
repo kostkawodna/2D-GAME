@@ -6,6 +6,7 @@ void Level::LoadLevel(int levelID)
 
     if (levelID == 0) {
         obstacles.push_back({ {0, 400, 800, 50}, true });
+        obstacles.push_back({ {400, 370, 150, 50}, true });
         obstacles.push_back({ {200, 320, 100, 20}, true });
         obstacles.push_back({ {400, 250, 150, 20}, true });
     }

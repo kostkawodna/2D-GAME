@@ -67,8 +67,19 @@ void player::HandleCollisions(const std::vector<Obstacle>& obstacles)
                 playerPos.y = obs.rect.y + obs.rect.height - hitboxOffsetY;
                 yVelocity = 0;
             }
-
-            // horizontal collision handler here :D
+            else
+            {
+                // Moving right into obstacle
+                if (playerPos.x + hitboxOffsetX < obs.rect.x && playerPos.x + hitboxOffsetX + hitboxWidth > obs.rect.x)
+                {
+                    playerPos.x = obs.rect.x - hitboxOffsetX - hitboxWidth;
+                }
+                // Moving left into obstacle
+                else if (playerPos.x + hitboxOffsetX > obs.rect.x && playerPos.x + hitboxOffsetX < obs.rect.x + obs.rect.width)
+                {
+                    playerPos.x = obs.rect.x + obs.rect.width - hitboxOffsetX;
+                }
+            }
         }
     }
 }
