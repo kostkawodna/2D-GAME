@@ -57,6 +57,10 @@ int main(void)
 
         EndMode2D();
         EndDrawing();
+        
+        // Draw player cords in top right
+        DrawText(TextFormat("X: %.2f", myPlayer.playerPos.x), 705, 10, 20, BLUE);
+        DrawText(TextFormat("Y: %.2f", myPlayer.playerPos.y), 705, 30, 20, BLUE);
 
         // Automation events text
         if (automation.IsRecording()) DrawText("Recording...", 10, 10, 20, RED);

@@ -12,8 +12,10 @@ void Level::LoadLevel(int levelID)
     }
     else if (levelID == 1) {
         obstacles.push_back({ {0, 450, 1000, 50}, true });
-        obstacles.push_back({ {150, 350, 80, 20}, true });
-        obstacles.push_back({ {300, 250, 120, 20}, true });
+        obstacles.push_back({ {150, 370, 80, 20}, true });
+        obstacles.push_back({ {300, 280, 120, 20}, true });
+        obstacles.push_back({ {500, 200, 50, 20}, true });
+        obstacles.push_back({ {600, 140, 150, 20}, true });
     }
 }
 
