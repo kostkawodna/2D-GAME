@@ -15,6 +15,7 @@ int main(void)
     player myPlayer;
     myPlayer.playerPos = { 350.0f, 150.0f };
     myPlayer.LoadPlayerTexture();
+    Vector2 tempCords = {350, 188};
 
     // Init camera
     Camera2D camera = { 0 };
@@ -35,11 +36,24 @@ int main(void)
     while (!WindowShouldClose())
     {
         // Automation events
-        if (IsKeyPressed(KEY_B)) automation.ToggleRecording();
-        if (IsKeyPressed(KEY_N)) automation.TogglePlayback();
+        if (IsKeyPressed(KEY_B))
+        {
+            if (!automation.IsRecording())
+            {
+                tempCords = myPlayer.playerPos;
+            }
+            automation.ToggleRecording();
+        }
+        
+        if (IsKeyPressed(KEY_N))
+        {
+            myPlayer.playerPos = tempCords;
+            automation.TogglePlayback();
+        }
+
         if (IsKeyPressed(KEY_M)) {
             automation.ResetScene();
-            myPlayer.playerPos = { 400, 280 }; // Reset player state
+            myPlayer.playerPos = tempCords; // Reset player state
         }
         automation.Update();
 
