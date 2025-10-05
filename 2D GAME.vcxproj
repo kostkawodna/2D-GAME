@@ -128,13 +128,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="automationManager.cpp" />
+    <ClCompile Include="debug.cpp" />
+    <ClCompile Include="entity.cpp" />
     <ClCompile Include="level.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="minotaur.cpp" />
     <ClCompile Include="player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="automationManager.h" />
+    <ClInclude Include="debug.h" />
+    <ClInclude Include="entity.h" />
     <ClInclude Include="level.h" />
+    <ClInclude Include="minotaur.h" />
     <ClInclude Include="player.h" />
   </ItemGroup>
   <ItemGroup>

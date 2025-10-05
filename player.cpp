@@ -1,204 +1,82 @@
 #include "player.h"
+#include <raylib.h>
 
-void player::LoadPlayerTexture()
+Player::Player()
 {
-    struct AnimationLoadInfo
-    {
-        AnimationState state;
-        const char* fileName;
-        int frames;
-    };
+    // Load dynamic animations
+    AddAnimation("IDLE", "Textures/Knight/IDLE.png", 7);
+    AddAnimation("WALK", "Textures/Knight/WALK.png", 8);
+    AddAnimation("RUN", "Textures/Knight/RUN.png", 8);
+    AddAnimation("JUMP", "Textures/Knight/JUMP.png", 5);
+    AddAnimation("ATTACK", "Textures/Knight/ATTACK 1.png", 6);
+    AddAnimation("DEFEND", "Textures/Knight/DEFEND.png", 6);
 
-    AnimationLoadInfo animationsToLoad[] = {
-        {AnimationState::IDLE, "IDLE.png", 7},
-        {AnimationState::WALK, "WALK.png", 8},
-        {AnimationState::RUN, "RUN.png", 8},
-        {AnimationState::JUMP, "JUMP.png", 5},
-        {AnimationState::ATTACK1, "ATTACK 1.png", 6},
-        {AnimationState::DEFEND, "DEFEND.png", 6}
-    };
+    // Hitbox
+    hitboxOffsetX = 32;
+    hitboxOffsetY = 27;
+    hitboxWidth = 32;
+    hitboxHeight = 35;
 
-    for (const auto& info : animationsToLoad)
-    {
-        std::string fullPath = "player_model/";
-        fullPath += info.fileName;
-
-        Animation anim;
-        anim.texture = LoadTexture(fullPath.c_str());
-        anim.frameCount = info.frames;
-
-        animations[info.state] = anim;
-
-        if (info.state == state)
-        {
-            frameRec = { 0.0f, 0.0f, (float)anim.texture.width / anim.frameCount, (float)anim.texture.height };
-            currentFrame = 0;
-        }
-    }
-
+    // Name
+    name = "Player1";
+    textWidth = MeasureText(name, 10);
 }
 
-void player::HandleCollisions(const std::vector<Obstacle>& obstacles)
+void Player::Update(const std::vector<Obstacle>& obstacles)
 {
-    // Update hitbox
-    playerHitBox = { playerPos.x + hitboxOffsetX,
-                     playerPos.y + hitboxOffsetY,
-                     hitboxWidth,
-                     hitboxHeight };
+    bool moving = false;
+    bool right = IsKeyDown(KEY_D);
+    bool left = IsKeyDown(KEY_A);
+    bool runHeld = IsKeyDown(KEY_LEFT_SHIFT);
+    float speed = runHeld ? runSpeed : walkSpeed;
 
-    isGrounded = false;
+    // Movement input
+    if (right && !isAttacking && !isDefending) { position.x += speed; facingRight = true; moving = true; }
+    if (left && !isAttacking && !isDefending) { position.x -= speed; facingRight = false; moving = true; }
 
-    for (const auto& obs : obstacles)
-    {
-        if (!obs.solid) continue;
-
-        if (CheckCollisionRecs(playerHitBox, obs.rect))
-        {
-            // Falling onto platform
-            if (yVelocity > 0 && (playerHitBox.y + playerHitBox.height - yVelocity) <= obs.rect.y)
-            {
-                playerPos.y = obs.rect.y - hitboxOffsetY - hitboxHeight;
-                yVelocity = 0;
-                isGrounded = true;
-            }
-            // Hitting head
-            else if (yVelocity < 0 && (playerHitBox.y - yVelocity) >= (obs.rect.y + obs.rect.height))
-            {
-                playerPos.y = obs.rect.y + obs.rect.height - hitboxOffsetY;
-                yVelocity = 0;
-            }
-            else
-            {
-                // Moving right into obstacle
-                if (playerPos.x + hitboxOffsetX < obs.rect.x && playerPos.x + hitboxOffsetX + hitboxWidth > obs.rect.x)
-                {
-                    playerPos.x = obs.rect.x - hitboxOffsetX - hitboxWidth;
-                }
-                // Moving left into obstacle
-                else if (playerPos.x + hitboxOffsetX > obs.rect.x && playerPos.x + hitboxOffsetX < obs.rect.x + obs.rect.width)
-                {
-                    playerPos.x = obs.rect.x + obs.rect.width - hitboxOffsetX;
-                }
-            }
-        }
-    }
-}
-
-void player::UpdatePlayer(const std::vector<Obstacle>& obstacles)
-{
-
-    // Handle inputs
-    bool isMoving = false;
-    bool movingRight = IsKeyDown(KEY_D);
-    bool movingLeft = IsKeyDown(KEY_A);
-    bool shiftHeld = IsKeyDown(KEY_LEFT_SHIFT);
-    bool isRunning = shiftHeld && (movingRight || movingLeft);
-
-    float actualSpeed = isRunning ? runSpeed : walkSpeed;
-
-    if (movingRight && !isAttacking && !isDefending)
-    {
-        playerPos.x += actualSpeed;
-        isMoving = true;
-        facingRight = true;
-    }
-    if (movingLeft && !isAttacking && !isDefending)
-    {
-        playerPos.x -= actualSpeed;
-        isMoving = true;
-        facingRight = false;
-    }
-    if ((IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_W)) && isGrounded && !isAttacking && !isDefending)
-    {
+    // Jump
+    if ((IsKeyDown(KEY_W) || IsKeyDown(KEY_SPACE)) && isGrounded && !isAttacking && !isDefending)
         yVelocity = -10.0f;
-        isGrounded = false;
-    }
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !isAttacking && isGrounded && !isDefending)
+
+    // Attack / defend input
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && isGrounded && !isAttacking && !isDefending)
     {
         isAttacking = true;
+        SetState("ATTACK");
         currentFrame = 0;
         frameCounter = 0;
     }
-    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !isAttacking && isGrounded && !isDefending)
+
+    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && isGrounded && !isAttacking && !isDefending)
     {
         isDefending = true;
+        SetState("DEFEND");
         currentFrame = 0;
         frameCounter = 0;
     }
-        
-    isRunning = shiftHeld && (movingRight || movingLeft);
 
-    // Gravity
+    // Apply gravity and handle collisions
     yVelocity += gravity;
-    playerPos.y += yVelocity;
-
-    // Collisions
+    position.y += yVelocity;
     HandleCollisions(obstacles);
 
-    // Animations
-    if (!isGrounded)
-        state = AnimationState::JUMP;
-    else if (isAttacking)
-        state = AnimationState::ATTACK1;
-    else if (isDefending)
-        state = AnimationState::DEFEND;
-    else if (isRunning && isMoving)
-        state = AnimationState::RUN;
-    else if (isMoving)
-        state = AnimationState::WALK;
-    else
-        state = AnimationState::IDLE;
+    // Determine animation state
+    if (!isGrounded) SetState("JUMP");
+    else if (isAttacking) SetState("ATTACK");
+    else if (isDefending) SetState("DEFEND");
+    else if (moving && runHeld) SetState("RUN");
+    else if (moving) SetState("WALK");
+    else SetState("IDLE");
 
-    // Animation frame update
+    // Animate frames
+    Animate();
+
+    // Reset attack/defend flags when animation finishes
     Animation& currentAnim = animations[state];
-    frameRec.width = (float)currentAnim.texture.width / currentAnim.frameCount;
-    frameRec.height = (float)currentAnim.texture.height;
-
-    frameCounter++;
-    if (frameCounter >= (60 / 12))
+    if (currentFrame == currentAnim.frameCount - 1)
     {
-        frameCounter = 0;
-        currentFrame++;
-
-        if (state == AnimationState::ATTACK1 && currentFrame >= currentAnim.frameCount)
-        {
-            isAttacking = false;
-            currentFrame = 0;
-        }
-        if (state == AnimationState::DEFEND && currentFrame >= currentAnim.frameCount)
-        {
-            isDefending = false;
-            currentFrame = 0;
-        }
-        else if (currentFrame >= currentAnim.frameCount)
-            currentFrame = 0;
+        if (isAttacking) isAttacking = false;
+        if (isDefending) isDefending = false;
     }
-
-    frameRec.x = (float)currentFrame * frameRec.width;
-    frameRec.y = 0;
-}
-
-Animation& player::GetCurrentAnimation()
-{
-    return animations[state];
-}
-
-void player::DrawPlayer()
-{
-    Animation& currentAnim = GetCurrentAnimation();
-    DrawText(playerName, playerHitBox.x - textWidth / 2 + playerHitBox.width / 2, playerHitBox.y - 20, 10, PINK); // Draw Player name
-
-    if (facingRight)
-        DrawTextureRec(currentAnim.texture, frameRec, playerPos, WHITE);
-    else
-    {
-        Rectangle flippedRec = frameRec;
-        flippedRec.width *= -1;
-
-        DrawTextureRec(currentAnim.texture, flippedRec, playerPos, WHITE);
-    }
-
-    //DrawRectangleLines(playerHitBox.x, playerHitBox.y, playerHitBox.width, playerHitBox.height, RED); // Player hitbox
-    //DrawRectangleLines(playerPos.x, playerPos.y, frameRec.width, frameRec.height, WHITE); // Size of animated frame
 }
 
