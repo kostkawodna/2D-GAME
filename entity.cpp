@@ -5,6 +5,7 @@ entity::entity()
     textWidth = MeasureText(name, 10);
 }   
 
+// Free textures if needed
 entity::~entity()
 {
     for (auto& pair : animations)
@@ -111,12 +112,12 @@ void entity::Animate(int fps)
     frameRec.y = 0;
 }
 
-void entity::Draw()
+void entity::Draw(int heightOffset, int fontSize, Color color)
 {
     Animation& anim = GetCurrentAnimation();
 
     // Draw entity name above hitbox
-    DrawText(name, hitbox.x - textWidth / 2 + hitbox.width / 2, hitbox.y - 20, 10, PINK);
+    DrawText(name, hitbox.x - textWidth / 2 + hitbox.width / 2, hitbox.y - heightOffset, fontSize, color);
 
     Rectangle sourceRec = frameRec;
     if (!facingRight) sourceRec.width *= -1;
@@ -126,5 +127,6 @@ void entity::Draw()
      // Debug
      //DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, RED); // Hitbox
      //DrawRectangleLines(position.x, position.y, frameRec.width, frameRec.height, WHITE); // Size of animated frame
-     //DrawCircle(position.x, position.y, 3, GREEN); // Origin
+     //DrawCircle(position.x, position.y, 3, GREEN);// Origin
 }
+    

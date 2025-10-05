@@ -32,8 +32,8 @@ int main()
     // Other entities:
 
     // Minotaur
-    Minotaur minotaur;
-    minotaur.position = { 450.0f, 100.0f };
+    Minotaur minotaur(myPlayer);
+    minotaur.position = { 450.0f, 50.0f };
 
     // Automation
     AutomationManager automation;
@@ -64,6 +64,7 @@ int main()
             automation.ResetScene();
             myPlayer.position = tempCords; // reset player
         }
+
         if (IsKeyPressed(KEY_F4))
         {
             isDebug = !isDebug;
@@ -82,19 +83,18 @@ int main()
 
         // Drawing
         BeginDrawing();
-        ClearBackground(DARKGRAY);
-
+        ClearBackground(BLACK);
         BeginMode2D(camera);
+
         currentLevel.DrawLevel();
-        myPlayer.Draw();
-        minotaur.Draw(); 
+        minotaur.Draw(10, 20, RED);
+        myPlayer.Draw(20, 10, BLUE);
 
         if (isDebug)
         {
             debugSystem.HandleDebugRectangle(camera);
         }
-
-        
+ 
         EndMode2D();
 
         // Draw player coordinates

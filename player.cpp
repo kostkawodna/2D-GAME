@@ -1,5 +1,5 @@
 #include "player.h"
-#include <raylib.h>
+#include "raylib.h"
 
 Player::Player()
 {
@@ -18,7 +18,7 @@ Player::Player()
     hitboxHeight = 35;
 
     // Name
-    name = "Player1";
+    name = "Knight";
     textWidth = MeasureText(name, 10);
 }
 

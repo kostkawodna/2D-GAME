@@ -1,5 +1,5 @@
 #pragma once
-#include <raylib.h>
+#include "raylib.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -45,7 +45,7 @@ public:
 
     // Functions
     virtual void Update(const std::vector<Obstacle>& obstacles) = 0;
-    void Draw();
+    void Draw(int heightOffset = 0, int fontSize = 10, Color color = PINK);
     void AddAnimation(const std::string& stateName, const std::string& filePath, int frames);
     void SetState(const std::string& newState);
 
