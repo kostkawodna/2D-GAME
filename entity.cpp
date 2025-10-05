@@ -127,6 +127,4 @@ void entity::Draw()
      //DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, RED); // Hitbox
      //DrawRectangleLines(position.x, position.y, frameRec.width, frameRec.height, WHITE); // Size of animated frame
      //DrawCircle(position.x, position.y, 3, GREEN); // Origin
-
-
 }

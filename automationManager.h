@@ -8,9 +8,9 @@ public:
     ~AutomationManager();
 
     void Update();
-    void ToggleRecording();        // Press 'B'
-    void TogglePlayback();         // Press 'N'
-    void ResetScene();             // Press 'M'
+    void ToggleRecording();        // Press 'F1'
+    void TogglePlayback();         // Press 'F2'
+    void ResetScene();             // Press 'F3'
 
     bool IsRecording() const { return eventRecording; }
     bool IsPlaying() const { return eventPlaying; }
