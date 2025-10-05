@@ -98,8 +98,9 @@ int main()
         EndMode2D();
 
         // Draw player coordinates
-        DrawText(TextFormat("X: %.2f", myPlayer.position.x), 705, 10, 20, BLUE);
-        DrawText(TextFormat("Y: %.2f", myPlayer.position.y), 705, 30, 20, BLUE);
+        Vector2 playerPos = myPlayer.GetActualPosition();
+        DrawText(TextFormat("X: %.2f", playerPos.x), 705, 10, 20, BLUE);
+        DrawText(TextFormat("Y: %.2f", playerPos.y), 705, 30, 20, BLUE);
 
         // Automation text
         if (automation.IsRecording()) DrawText("Recording...", 10, 10, 20, RED);

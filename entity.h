@@ -17,14 +17,19 @@ public:
     entity();
     virtual ~entity();
 
-    Vector2 position = { 0, 0 };
-
     // Hitbox
     float hitboxOffsetX = 0;
     float hitboxOffsetY = 0;
     float hitboxWidth = 0;
     float hitboxHeight = 0;
     Rectangle hitbox;
+
+    Vector2 position = { 0, 0 };
+    Vector2 GetActualPosition() const
+    {
+        return { position.x + hitboxOffsetX + hitboxWidth / 2,
+                 position.y + hitboxOffsetY + hitboxHeight };
+    }
 
     // Physics
     float yVelocity = 0.0f;
